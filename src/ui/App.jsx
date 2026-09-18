@@ -3,6 +3,8 @@ import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, Cart
 import { analyzeDobrofsky } from '../engine/dobrofsky/model.js';
 import { compareStress } from '../engine/risk/stress.js';
 import { analyzeHistory } from '../engine/risk/history.js';
+import { altmanZ, piotroskiF } from '../engine/benchmarks/models.js';
+import { analyzeEarningsQuality } from '../engine/quality/earnings.js';
 
 const sample=[
  {period:'2023',financials:{revenue:1000,currentAssets:520,currentLiabilities:250,totalAssets:1500,totalDebt:430,totalEquity:1070,ebit:210,interestExpense:38,operatingIncome:210,netIncome:150,operatingCashFlow:190,accountsReceivable:110,inventory:90}},
@@ -21,7 +23,8 @@ function App(){
  if(!analysis?.ok)return <main><h1>Dobrofsky Risk Analyzer</h1><p>Financial data is incomplete.</p></main>;
  const decomposition=Object.entries(analysis.components).map(([factor,risk])=>({factor,risk}));
  const trend=history.series.filter(x=>x.ok).map(x=>({period:x.period,risk:x.score}));
- const quality=periods.map(x=>({period:x.period,netIncome:x.financials.netIncome,operatingCashFlow:x.financials.operatingCashFlow}));
+ const earnings=analyzeEarningsQuality(periods); const quality=earnings.series;
+ const previous=periods.at(-2)?.financials; const altman=altmanZ(latest); const piotroski=piotroskiF(latest,previous);
  const update=(key,val)=>setPeriods(p=>p.map((x,i)=>i===p.length-1?{...x,financials:{...x.financials,[key]:Number(val)}}:x));
  return <main>
   <header><div><span className="eyebrow">FINANCIAL RISK INTELLIGENCE</span><h1>Dobrofsky Risk Analyzer</h1><input className="company" value={company} onChange={e=>setCompany(e.target.value)}/></div><Score value={analysis.score} label={analysis.classification}/></header>
@@ -30,6 +33,7 @@ function App(){
   <article><h2>Risk decomposition</h2><p>Contribution by core financial dimension.</p><ResponsiveContainer width="100%" height={280}><BarChart data={decomposition} layout="vertical"><CartesianGrid strokeDasharray="3 3"/><XAxis type="number" domain={[0,100]}/><YAxis dataKey="factor" type="category" width={90}/><Tooltip/><Bar dataKey="risk"/></BarChart></ResponsiveContainer></article></section>
   <section className="grid two"><article><h2>Quality of earnings</h2><p>Net income compared with operating cash flow.</p><ResponsiveContainer width="100%" height={280}><LineChart data={quality}><CartesianGrid strokeDasharray="3 3"/><XAxis dataKey="period"/><YAxis/><Tooltip/><Line dataKey="netIncome" strokeWidth={2}/><Line dataKey="operatingCashFlow" strokeWidth={2}/></LineChart></ResponsiveContainer></article>
   <article><h2>Stress simulator</h2><div className="stress">{Object.entries(stress).map(([k,v])=><label key={k}>{k}<input type="number" value={v} onChange={e=>setStress({...stress,[k]:Number(e.target.value)})}/><small>%</small></label>)}</div><div className="compare"><div>Baseline <b>{stressed.baseline.score}</b></div><div>Stressed <b>{stressed.stressed.score}</b></div></div></article></section>
+  <section className="grid two"><article><h2>Benchmark models</h2><p>Independent models are shown on their native scales and are not converted into the Dobrofsky 0–100 score.</p><div className="driver"><span>Altman Z-Score</span><b>{altman.available?`${altman.score} — ${altman.interpretation}`:"More inputs required"}</b></div><div className="driver"><span>Piotroski F-Score</span><b>{piotroski.available?`${piotroski.score}/9`:"Prior period required"}</b></div><p className="modelNote">These benchmarks use different definitions, populations and interpretations. They are reference signals, not equivalent probabilities.</p></article><article><h2>Earnings-quality warnings</h2>{earnings.alerts.length?earnings.alerts.map(a=><div className="alert" key={a}>{a}</div>):<p>No earnings-quality warning triggered.</p>}</article></section>
   <section className="grid two"><article><h2>Early warnings</h2>{history.alerts.length?history.alerts.map(a=><div className="alert" key={a}>{a}</div>):<p>No historical warning triggered.</p>}<h3>Top risk drivers</h3>{analysis.drivers.map(d=><div className="driver" key={d.factor}><span>{d.factor}</span><b>{d.risk}/100</b></div>)}</article>
   <article><h2>Latest financial inputs</h2><div className="inputs">{['revenue','currentAssets','currentLiabilities','totalAssets','totalDebt','totalEquity','ebit','interestExpense','operatingIncome','netIncome','operatingCashFlow'].map(k=><label key={k}>{k}<input type="number" value={latest[k]} onChange={e=>update(k,e.target.value)}/></label>)}</div></article></section>
   <footer>Research model {analysis.model.version}. Not a bankruptcy probability. Calibration and out-of-sample backtesting are required before predictive use.</footer>
