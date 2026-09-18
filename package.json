@@ -1,11 +1,21 @@
 {
   "name": "dobrofsky-risk-analyzer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
     "test": "node --test",
-    "check": "node --check src/engine/dobrofsky/model.js && node --check src/engine/risk/stress.js"
+    "check": "node --check src/engine/dobrofsky/model.js && node --check src/engine/risk/stress.js && node --check src/engine/risk/history.js"
   },
-  "engines": { "node": ">=20" }
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "vite": "^7.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^3.0.0"
+  },
+  "devDependencies": {},
+  "engines": { "node": ">=24" }
 }
