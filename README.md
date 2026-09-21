@@ -13,6 +13,26 @@ It is intended as a decision-support tool for analysts, finance professionals, c
 
 ---
 
+
+## 🖼 Analytical Flow
+
+```mermaid
+flowchart LR
+    A[Financial Statements] --> B[Normalization & Validation]
+    B --> C[Financial Ratios]
+    C --> D[Dobrofsky Scoring Engine]
+    D --> E[Risk Decomposition]
+    E --> F[Explainability]
+    F --> G[Early-Warning Signals]
+    G --> H[Stress Testing]
+    H --> I[Historical Analysis]
+    I --> J[Benchmarking & Validation]
+```
+
+The analyzer is designed as a layered decision-support system rather than a single black-box score. Each stage can be tested, explained and improved independently.
+
+---
+
 ## 🎯 Project Goals
 
 The project is being developed around five principles:
