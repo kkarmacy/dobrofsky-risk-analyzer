@@ -1,15 +1,17 @@
 # Dobrofsky Risk Analyzer
 
-**Financial distress · Early-warning signals · Stress testing · Explainable risk analytics**
+**Teoría de Dobrofsky · Financial distress · Early-warning signals · Stress testing · Explainable risk analytics**
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
 [![Node](https://img.shields.io/badge/Node-%3E%3D24-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Research](https://img.shields.io/badge/Status-Research%20%26%20Development-555)](#roadmap)
 
-Dobrofsky Risk Analyzer is a research-oriented financial risk analysis platform designed to separate **data normalization, financial ratios, proprietary scoring logic, explainability, stress testing, historical analysis and benchmarking** into clear analytical layers.
+Dobrofsky Risk Analyzer is the experimental software implementation of the **Dobrofsky Theory (Teoría de Dobrofsky)**, a financial-risk research framework developed by **Christian Dobrofsky**.
 
-It is intended as a decision-support tool for analysts, finance professionals, credit teams and researchers interested in corporate financial distress and early-warning frameworks.
+The theory explores whether a structured combination of **financial statement normalization, financial ratios, scoring logic, explainability, stress testing, historical analysis and benchmarking** can provide more useful early-warning signals for corporate financial deterioration.
+
+The project is intended as a decision-support and research tool for analysts, finance professionals, credit teams and researchers interested in corporate financial distress and early-warning frameworks. The Dobrofsky Theory is currently **under development, testing, backtesting and validation**; it should not be treated as an established or independently validated predictive model.
 
 ---
 
@@ -30,6 +32,24 @@ flowchart LR
 ```
 
 The analyzer is designed as a layered decision-support system rather than a single black-box score. Each stage can be tested, explained and improved independently.
+
+---
+
+## 🧠 Teoría de Dobrofsky
+
+The **Dobrofsky Theory** is the conceptual framework behind this repository. Its objective is to study financial deterioration as a **multi-factor and dynamic process**, rather than relying on a single isolated ratio or one-period score.
+
+The working hypothesis is that risk assessment may become more informative when it combines:
+
+- normalized financial-statement inputs
+- liquidity, leverage, profitability, coverage and efficiency ratios
+- trend deterioration across periods
+- early-warning indicators
+- stress and sensitivity scenarios
+- explainable decomposition of risk drivers
+- benchmarking against established financial-distress models
+
+This repository is being used to translate that theory into testable software components and to evaluate the framework through documented backtesting and comparison.
 
 ---
 
