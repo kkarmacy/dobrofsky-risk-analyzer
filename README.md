@@ -2,10 +2,22 @@
 
 **Teoría de Dobrofsky · Financial distress · Early-warning signals · Stress testing · Explainable risk analytics**
 
+<p align="center">
+  <img src="docs/dobrofsky-risk-preview.svg" alt="Dobrofsky Risk Analyzer — Teoría de Dobrofsky" width="900">
+</p>
+
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
 [![Node](https://img.shields.io/badge/Node-%3E%3D24-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Research](https://img.shields.io/badge/Status-Research%20%26%20Development-555)](#roadmap)
+
+## 📍 Project Status
+
+**Active research — development, backtesting and validation.**
+
+This project is not presented as an independently validated predictive model. Its methodology and performance are being documented and tested.
+
+---
 
 Dobrofsky Risk Analyzer is the experimental software implementation of the **Dobrofsky Theory (Teoría de Dobrofsky)**, a financial-risk research framework developed by **Christian Dobrofsky**.
 
@@ -36,6 +48,8 @@ The analyzer is designed as a layered decision-support system rather than a sing
 ---
 
 ## 🧠 Teoría de Dobrofsky
+
+📄 **Formal research document:** [docs/DOBROFSKY_THEORY.md](docs/DOBROFSKY_THEORY.md)
 
 The **Dobrofsky Theory** is the conceptual framework behind this repository. Its objective is to study financial deterioration as a **multi-factor and dynamic process**, rather than relying on a single isolated ratio or one-period score.
 
@@ -172,6 +186,13 @@ Dobrofsky Risk Analyzer is a **research and analytical decision-support project*
 Risk outputs are analytical estimates and **do not guarantee default, bankruptcy, solvency, investment performance or future outcomes**. They should not be treated as a substitute for professional credit analysis, audited financial information, investment advice or independent due diligence.
 
 Model validation and documented backtesting are required before predictive claims are made.
+
+---
+
+## 🔗 Related Projects
+
+- **Declarafy:** [github.com/kkarmacy/declarafy](https://github.com/kkarmacy/declarafy) — TaxTech con IA para el mercado peruano
+- **Christian Dobrofsky:** [github.com/kkarmacy](https://github.com/kkarmacy) — perfil y proyectos
 
 ---
 
