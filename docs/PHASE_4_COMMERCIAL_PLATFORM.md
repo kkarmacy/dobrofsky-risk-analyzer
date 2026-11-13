@@ -77,6 +77,17 @@ Consulting is a service workflow, not an automated claim that an analysis has be
 9. Billing-provider adapter and webhook verification.
 10. Usage metering, security review, and production hardening.
 
+## Current implementation status
+
+The initial repository foundation now includes:
+- Feature entitlements for Community, Professional, Consulting, and Enterprise editions.
+- A structured AI interpretation contract with guardrails that preserve deterministic model outputs.
+- Workspace creation and role-based permission checks for owner, admin, analyst, and viewer roles.
+- Validated immutable audit-event records and append-only in-memory event history.
+- Automated unit tests for plan access, AI request validation, workspace permissions, and audit-event behavior.
+
+These modules are domain foundations only. They do not yet provide persistent storage, authenticated users, server-side authorization, payment verification, AI provider connectivity, or production-grade tamper-evident audit storage. Client-side permission checks must never be treated as a security boundary.
+
 ## Dependency on Phase 3
 
 Phase 4 can be scaffolded now, but paid analytical claims should not ship before the Phase 3 data, calibration, backtesting, and validation work is completed.
