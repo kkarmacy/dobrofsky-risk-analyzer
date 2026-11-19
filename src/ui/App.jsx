@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import { analyzeDobrofsky } from '../engine/dobrofsky/model.js';
 import { compareStress } from '../engine/risk/stress.js';
 import { analyzeHistory } from '../engine/risk/history.js';
 import { altmanZ, piotroskiF } from '../engine/benchmarks/models.js';
 import { analyzeEarningsQuality } from '../engine/quality/earnings.js';
+import { createIndexedDBAnalysisStore } from '../platform/storage/analysis-store.js';
 
 const sample=[
  {period:'2023',financials:{revenue:1000,currentAssets:520,currentLiabilities:250,totalAssets:1500,totalDebt:430,totalEquity:1070,ebit:210,interestExpense:38,operatingIncome:210,netIncome:150,operatingCashFlow:190,accountsReceivable:110,inventory:90}},
@@ -16,6 +17,11 @@ const pct=n=>Number(n)/100;
 function Score({value,label}){return <div className="score"><div className="scoreNum">{value}</div><div>/100</div><strong>{label.toUpperCase()}</strong></div>}
 function App(){
  const [periods,setPeriods]=useState(sample); const [company,setCompany]=useState('Example Company');
+ const [activeId,setActiveId]=useState(''); const [savedAnalyses,setSavedAnalyses]=useState([]); const [storageMessage,setStorageMessage]=useState('Opening local analysis storage...');
+ const store=useMemo(()=>{try{return createIndexedDBAnalysisStore()}catch(error){return null}},[]);
+ useEffect(()=>{if(!store){setStorageMessage('Local storage is unavailable in this environment.');return;} store.list().then(items=>{setSavedAnalyses(items);setStorageMessage('Local storage ready.');}).catch(()=>setStorageMessage('Could not open saved analyses.'));},[store]);
+ const saveCurrent=async()=>{if(!store){setStorageMessage('Local storage is unavailable.');return;}try{const record=await store.save({id:activeId||`analysis-${Date.now()}`,company,periods});setActiveId(record.id);setSavedAnalyses(await store.list());setStorageMessage('Analysis saved on this device.');}catch(error){setStorageMessage(error.message||'Unable to save analysis.');}};
+ const loadSaved=async id=>{if(!store||!id)return;try{const record=await store.get(id);if(record){setActiveId(record.id);setCompany(record.company);setPeriods(record.periods);setStorageMessage('Saved analysis loaded.');}}catch(error){setStorageMessage(error.message||'Unable to load analysis.');}};
  const latest=periods.at(-1)?.financials; const analysis=useMemo(()=>latest?analyzeDobrofsky(latest):null,[latest]);
  const history=useMemo(()=>analyzeHistory(periods),[periods]);
  const [stress,setStress]=useState({revenuePct:-10,ebitPct:-20,operatingCashFlowPct:-25,interestExpensePct:20});
@@ -27,7 +33,7 @@ function App(){
  const previous=periods.at(-2)?.financials; const altman=altmanZ(latest); const piotroski=piotroskiF(latest,previous);
  const update=(key,val)=>setPeriods(p=>p.map((x,i)=>i===p.length-1?{...x,financials:{...x.financials,[key]:Number(val)}}:x));
  return <main>
-  <header><div><span className="eyebrow">FINANCIAL RISK INTELLIGENCE</span><h1>Dobrofsky Risk Analyzer</h1><input className="company" value={company} onChange={e=>setCompany(e.target.value)}/></div><Score value={analysis.score} label={analysis.classification}/></header>
+  <header><div><span className="eyebrow">FINANCIAL RISK INTELLIGENCE</span><h1>Dobrofsky Risk Analyzer</h1><input className="company" value={company} onChange={e=>setCompany(e.target.value)}/><div className="storageActions"><button onClick={saveCurrent}>Save analysis</button><select value="" onChange={e=>loadSaved(e.target.value)}><option value="">Load saved analysis...</option>{savedAnalyses.map(item=><option key={item.id} value={item.id}>{item.company} — {new Date(item.updatedAt).toLocaleString()}</option>)}</select><small>{storageMessage}</small></div></div><Score value={analysis.score} label={analysis.classification}/></header>
   <section className="grid metrics">{Object.entries(analysis.components).map(([k,v])=><article key={k}><span>{k}</span><b>{v}/100</b></article>)}</section>
   <section className="grid two"><article><h2>Risk evolution</h2><p>Historical deterioration of the Dobrofsky score.</p><ResponsiveContainer width="100%" height={280}><LineChart data={trend}><CartesianGrid strokeDasharray="3 3"/><XAxis dataKey="period"/><YAxis domain={[0,100]}/><Tooltip/><ReferenceLine y={65}/><Line type="monotone" dataKey="risk" strokeWidth={3}/></LineChart></ResponsiveContainer></article>
   <article><h2>Risk decomposition</h2><p>Contribution by core financial dimension.</p><ResponsiveContainer width="100%" height={280}><BarChart data={decomposition} layout="vertical"><CartesianGrid strokeDasharray="3 3"/><XAxis type="number" domain={[0,100]}/><YAxis dataKey="factor" type="category" width={90}/><Tooltip/><Bar dataKey="risk"/></BarChart></ResponsiveContainer></article></section>
